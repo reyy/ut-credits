@@ -4,7 +4,7 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "start": "node --harmony main.js"
+    "start": "node  --harmony --use_strict --harmony_generators main.js"
   },
   "dependencies": {
     "ejs": "~1.0.0",
