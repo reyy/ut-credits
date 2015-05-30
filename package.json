@@ -1,0 +1,24 @@
+{
+  "name": "ut-credits",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "node --harmony main.js"
+  },
+  "dependencies": {
+    "ejs": "~1.0.0",
+    "express": "~4.9.8",
+    "zombie" : "~4.0.10"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://reyy@github.com/reyy/ut-credits.git"
+  },
+  "author": "rey",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/reyy/ut-credits/issues"
+  },
+  "homepage": "https://github.com/reyy/ut-credits"
+}
