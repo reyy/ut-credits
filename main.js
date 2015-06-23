@@ -1,3 +1,4 @@
+var selector = 'body > form > table > tbody > tr:nth-child(2) > td:nth-child(1) > fieldset > table > tbody > tr > td:nth-child(2) > a';
 var express = require('express');
 var Browser = require("zombie");
 var bodyParser = require('body-parser');
@@ -27,9 +28,16 @@ app.post('/', function (req, res) {
         .fill('input[name="txtUserID"]', username)
         .fill('input[name="txtPwd"]', password)
         .pressButton('input[value="Login"]', function(response) {
-            //console.log(browser.html("body"));
-            var ans = browser.html("body");
-            res.send(ans);
+            try {
+                browser.assert.text(selector, 'My Meal Balance');
+                browser.clickLink(selector, function(res) {
+                    
+                });
+                res.send("{'Status': 'OK'}");
+            } catch(e) {
+                res.send("{'Status': 'Error', 'Message': 'Invalid Credentials for " + username +"'}");
+                return;
+            }
         });
     });
 
