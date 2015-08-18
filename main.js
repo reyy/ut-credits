@@ -1,4 +1,9 @@
-var selector = 'body > form > table > tbody > tr:nth-child(2) > td:nth-child(1) > fieldset > table > tbody > tr > td:nth-child(2) > a';
+const selectors = {
+    loginValidator : 'body > form > table > tbody > tr:nth-child(2) > td:nth-child(1) > fieldset > table > tbody > tr > td:nth-child(2) > a',
+    name : 'body > form:nth-child(3) > table > tbody > tr:nth-child(1) > td > table:nth-child(1) > tbody > tr:nth-child(1) > td:nth-child(2)',
+    matric : 'body > form:nth-child(3) > table > tbody > tr:nth-child(1) > td > table:nth-child(1) > tbody > tr:nth-child(2) > td:nth-child(2)',
+
+};
 var express = require('express');
 var Browser = require("zombie");
 var bodyParser = require('body-parser');
@@ -29,11 +34,16 @@ app.post('/', function (req, res) {
         .fill('input[name="txtPwd"]', password)
         .pressButton('input[value="Login"]', function(response) {
             try {
-                browser.assert.text(selector, 'My Meal Balance');
-                browser.clickLink(selector, function(res) {
-                    
+                browser.assert.text(selectors.loginValidator, 'My Meal Balance');
+                browser.visit("https://myaces.nus.edu.sg/Prjhml/studstaffMealBalance.do", function(done) {
+                    //res.send(browser.html("body"));
+                    var ans = {
+                        'Status' : 'OK',
+                        'Name' : browser.text(selectors.name),
+                        'Matric' : browser.text(selectors.matric)
+                        };
+                    res.send(ans);
                 });
-                res.send("{'Status': 'OK'}");
             } catch(e) {
                 res.send("{'Status': 'Error', 'Message': 'Invalid Credentials for " + username +"'}");
                 return;
@@ -50,4 +60,3 @@ var server = app.listen(process.env.PORT || 5000, function () {
 
     console.log('App listening at http://%s:%s', host, port);
 });
-
