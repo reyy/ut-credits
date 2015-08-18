@@ -2,8 +2,21 @@ const selectors = {
     loginValidator : 'body > form > table > tbody > tr:nth-child(2) > td:nth-child(1) > fieldset > table > tbody > tr > td:nth-child(2) > a',
     name : 'body > form:nth-child(3) > table > tbody > tr:nth-child(1) > td > table:nth-child(1) > tbody > tr:nth-child(1) > td:nth-child(2)',
     matric : 'body > form:nth-child(3) > table > tbody > tr:nth-child(1) > td > table:nth-child(1) > tbody > tr:nth-child(2) > td:nth-child(2)',
-
+    breakfast : {
+        consumed : 'body > form:nth-child(3) > table > tbody > tr:nth-child(1) > td > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(3)',
+        forfeited: 'body > form:nth-child(3) > table > tbody > tr:nth-child(1) > td > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(4)',
+        carryforward : 'body > form:nth-child(3) > table > tbody > tr:nth-child(1) > td > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(5)',
+        remaining : 'body > form:nth-child(3) > table > tbody > tr:nth-child(1) > td > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(6)'
+    },
+    dinner : {
+        consumed : 'body > form:nth-child(3) > table > tbody > tr:nth-child(1) > td > table:nth-child(4) > tbody > tr:nth-child(3) > td:nth-child(3)',
+        forfeited: 'body > form:nth-child(3) > table > tbody > tr:nth-child(1) > td > table:nth-child(4) > tbody > tr:nth-child(3) > td:nth-child(4)',
+        carryforward : 'body > form:nth-child(3) > table > tbody > tr:nth-child(1) > td > table:nth-child(4) > tbody > tr:nth-child(3) > td:nth-child(5)',
+        remaining : 'body > form:nth-child(3) > table > tbody > tr:nth-child(1) > td > table:nth-child(4) > tbody > tr:nth-child(3) > td:nth-child(6)'
+    },
+    logStart : '#txntable > tbody > tr:nth-child(1) > td:nth-child(2)'
 };
+
 var express = require('express');
 var Browser = require("zombie");
 var bodyParser = require('body-parser');
@@ -40,8 +53,21 @@ app.post('/', function (req, res) {
                     var ans = {
                         'Status' : 'OK',
                         'Name' : browser.text(selectors.name),
-                        'Matric' : browser.text(selectors.matric)
-                        };
+                        'Matric' : browser.text(selectors.matric),
+                        'Breakfast' : {
+                            'Consumed' : browser.text(selectors.breakfast.consumed),
+                            'Forfeited' : browser.text(selectors.breakfast.forfeited),
+                            'CarriedForward' : browser.text(selectors.breakfast.carryforward),
+                            'Remaining' : browser.text(selectors.breakfast.remaining)
+                        },
+                        'Dinner' : {
+                            'Consumed' : browser.text(selectors.dinner.consumed),
+                            'Forfeited' : browser.text(selectors.dinner.forfeited),
+                            'CarriedForward' : browser.text(selectors.dinner.carryforward),
+                            'Remaining' : browser.text(selectors.dinner.remaining)
+                        }
+                    };
+                    
                     res.send(ans);
                 });
             } catch(e) {
