@@ -10,7 +10,8 @@
     "ejs": "~1.0.0",
     "express": "~4.9.8",
     "zombie" : "~2.5.1",
-    "body-parser": "~1.13.1"
+    "body-parser": "~1.13.1",
+    "xlsjs": "~0.7.5"
   },
   "repository": {
     "type": "git",
