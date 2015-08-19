@@ -14,12 +14,13 @@ const selectors = {
         carryforward : 'body > form:nth-child(3) > table > tbody > tr:nth-child(1) > td > table:nth-child(4) > tbody > tr:nth-child(3) > td:nth-child(5)',
         remaining : 'body > form:nth-child(3) > table > tbody > tr:nth-child(1) > td > table:nth-child(4) > tbody > tr:nth-child(3) > td:nth-child(6)'
     },
-    logStart : '#txntable > tbody > tr:nth-child(1) > td:nth-child(2)'
+    download: 'body > form:nth-child(3) > table > tbody > tr:nth-child(6) > td > table > tbody > tr > td > div > a'
 };
 
 var express = require('express');
 var Browser = require("zombie");
 var bodyParser = require('body-parser');
+var xls = require ('xlsjs');
 var app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -67,8 +68,21 @@ app.post('/', function (req, res) {
                             'Remaining' : browser.text(selectors.dinner.remaining)
                         }
                     };
+                    ans['Breakfast']['Logs'] = new Array();
+                    ans['Dinner']['Logs'] = new Array();
+                    //Todo : Error checks!
+                    //var logCount = 0; var expectedCount = browser.text(selectors.breakfast.consumed) + browser.text(selectors.dinner.consumed);
                     
-                    res.send(ans);
+                    browser.clickLink(selectors.download, function(e) {
+                        var workbook = xls.read(browser.resources[0].response.body, {type: 'binary'});
+                        var sheetJson = xls.utils.sheet_to_json(workbook.Sheets['-']);
+                        
+                        for(var i=0; i<sheetJson.length; i++) 
+                            (ans[sheetJson[i]['Meal Category']]['Logs']).push(sheetJson[i]['Meal Consumed Date and Time']);
+                           
+                        res.send(ans);
+                    });
+
                 });
             } catch(e) {
                 res.send("{'Status': 'Error', 'Message': 'Invalid Credentials for " + username +"'}");
