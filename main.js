@@ -30,27 +30,24 @@ var server = require('webserver').create();
 //start web server
 var service = server.listen(ip_server+':'+ip_port, function(request, response) {
 
-    if(request.method != "POST") {
+    if(request.method != "POST" || !(request.post.username && request.post.password)) {
         response.statusCode = 400;
         response.close();
-    }
-    console.log(JSON.stringify(request, null, 4));
+    } 
+
     var links = [];
     var casper = require('casper').create();
 
-    // casper.start('https://myaces.nus.edu.sg/Prjhml/', function() {
-    // this.echo(this.getTitle());
     casper.start('https://myaces.nus.edu.sg/Prjhml/', function() {
         this.fill('form[name=loginForm]', {
-            'txtUserID':    'a0111823',
-            'txtPwd':    ''
+            'txtUserID':    request.post.username,
+            'txtPwd':       request.post.password
         }, true);
     });
 
 
     var ans = {};
     casper.thenOpen('https://myaces.nus.edu.sg/Prjhml/studstaffMealBalance.do', function() {
-        //this.echo(this.getTitle());
         ans = {
             'Status' : 'OK',
             'Name' : (this.getElementsInfo(selectors.name))[0].text,
