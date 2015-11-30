@@ -1,7 +1,9 @@
+var system = require('system');
+var env = system.env;
 
 //define ip and port to web service
-var ip_server =/* process.env.OPENSHIFT_NODEJS_IP || */'127.0.0.1';
-var ip_port = /*process.env.OPENSHIFT_NODEJS_PORT || */'8585';
+var ip_server = env.OPENSHIFT_DIY_IP || '127.0.0.1';
+var ip_port = env.OPENSHIFT_DIY_PORT || '8585';
 
 //includes web server modules
 var server = require('webserver').create();
