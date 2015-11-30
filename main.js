@@ -14,7 +14,7 @@ const selectors = {
         carryforward : 'body > form > table > tbody > tr:nth-child(1) > td > table:nth-child(4) > tbody > tr:nth-child(3) > td:nth-child(5)',
         remaining : 'body > form > table > tbody > tr:nth-child(1) > td > table:nth-child(4) > tbody > tr:nth-child(3) > td:nth-child(6)'
     },
-    download: 'body > form > table > tbody > tr:nth-child(6) > td > table > tbody > tr > td > div > a'
+    download: '.exportlinks > a'
 };
 
 var system = require('system');
@@ -75,12 +75,27 @@ var service = server.listen(ip_server+':'+ip_port, function(request, response) {
         };
         ans['Breakfast']['Logs'] = new Array();
         ans['Dinner']['Logs'] = new Array();
+        var link2 = this.getElementsInfo(selectors.download)[0].attributes.href;
+    
+        //Hack to download the csv history
+        //console.log(link2);
+        link2 = link2.replace("-e=2&", "-e=1&");
+        link2 = 'https://myaces.nus.edu.sg/Prjhml/' + link2
+
+        var history = decodeBase64(this.base64encode(link2, 'get'));
+        consumeList = history.split("\n");
+        for(var i=0; i<consumeList.length - 1; i++) 
+        {
+            console.log(consumeList[i])
+            var consumeComponents = consumeList[i].split(",");
+            (ans[consumeComponents[2]]['Logs']).push(consumeComponents[1]);
+        }
+
         response.statusCode = 200;
         response.write(JSON.stringify(ans, null, null));
         response.close();
     });
-
-    //
+    
     casper.run(function() {
         casper.clear();
         phantom.clearCookies();
@@ -88,4 +103,16 @@ var service = server.listen(ip_server+':'+ip_port, function(request, response) {
     });
 
 });
+
+var decodeBase64 = function(s) {
+    var e={},i,b=0,c,x,l=0,a,r='',w=String.fromCharCode,L=s.length;
+    var A="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    for(i=0;i<64;i++){e[A.charAt(i)]=i;}
+    for(x=0;x<L;x++){
+        c=e[s.charAt(x)];b=(b<<6)+c;l+=6;
+        while(l>=8){((a=(b>>>(l-=8))&0xff)||(x<(L-2)))&&(r+=w(a));}
+    }
+    return r;
+};
+
 console.log('Server running at http://' + ip_server+':'+ip_port+'/');
