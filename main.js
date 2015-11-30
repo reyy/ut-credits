@@ -86,7 +86,6 @@ var service = server.listen(ip_server+':'+ip_port, function(request, response) {
         consumeList = history.split("\n");
         for(var i=0; i<consumeList.length - 1; i++) 
         {
-            console.log(consumeList[i])
             var consumeComponents = consumeList[i].split(",");
             (ans[consumeComponents[2]]['Logs']).push(consumeComponents[1]);
         }
