@@ -32,12 +32,12 @@ var service = server.listen(ip_server+':'+ip_port, function(request, response) {
 
     if(request.method != "POST" || !(request.post.username && request.post.password)) {
         response.statusCode = 400;
+        response.write("Error 400 : Bad Request");
         response.close();
+        return;
     } 
 
-    var links = [];
     var casper = require('casper').create();
-
     casper.start('https://myaces.nus.edu.sg/Prjhml/', function() {
         this.fill('form[name=loginForm]', {
             'txtUserID':    request.post.username,
@@ -45,6 +45,14 @@ var service = server.listen(ip_server+':'+ip_port, function(request, response) {
         }, true);
     });
 
+    casper.then(function(){
+        if(!casper.exists(selectors.loginValidator)){
+            response.statusCode = 401;
+            response.write("Error 401 Unauthorized");
+            response.close();
+            casper.thenBypass(2);
+        }
+    });
 
     var ans = {};
     casper.thenOpen('https://myaces.nus.edu.sg/Prjhml/studstaffMealBalance.do', function() {
@@ -67,13 +75,16 @@ var service = server.listen(ip_server+':'+ip_port, function(request, response) {
         };
         ans['Breakfast']['Logs'] = new Array();
         ans['Dinner']['Logs'] = new Array();
+        response.statusCode = 200;
+        response.write(JSON.stringify(ans, null, null));
+        response.close();
     });
 
     //
     casper.run(function() {
-        response.statusCode = 200;
-        response.write(JSON.stringify(ans, null, null));
-        response.close();              
+        casper.clear();
+        phantom.clearCookies();
+        ans = {};           
     });
 
 });
